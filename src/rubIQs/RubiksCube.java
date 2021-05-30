@@ -1,6 +1,7 @@
 package rubIQs;
 
 import java.util.*;
+import java.awt.Color;
 import static rubIQs.RubiksCube.colors.*;
 import static rubIQs.RubiksCube.direction.*;
 
@@ -41,6 +42,32 @@ public class RubiksCube {
         public int asChar() {
             return this.C;
         }
+        public Color asAwtColor() {
+            Color awtColor;
+            switch(this.C) {
+                case 'W':
+                    awtColor = Color.WHITE;
+                    break;
+                case 'B':
+                    awtColor = Color.BLUE;
+                    break;
+                case 'R':
+                    awtColor = Color.RED;
+                    break;
+                case 'G':
+                    awtColor = Color.GREEN;
+                    break;
+                case 'O':
+                    awtColor = Color.ORANGE;
+                    break;
+                case 'Y':
+                    awtColor = Color.YELLOW;
+                    break;
+                default:
+                    awtColor = null;
+            }
+            return awtColor;
+        }
     }
 
     public enum direction {
@@ -69,6 +96,31 @@ public class RubiksCube {
                 {{colors.BLUE, colors.ORANGE, colors.RED}, {colors.ORANGE, colors.YELLOW, colors.ORANGE}, {colors.GREEN, colors.RED, colors.YELLOW}}
         };
         */
+    }
+
+    /**
+     *
+     * @return cubeClone - a copy of the cube representation
+     */
+    public colors[][][] getCube() {
+        colors[][][] cubeClone = new colors[6][3][3];
+        for (colors side: colors.values()) {
+            for (int row=0; row<3; row++) {
+                System.arraycopy(cube[side.asInt()][row], 0, cubeClone[side.asInt()][row], 0, 3);
+            }
+        }
+        return cubeClone;
+    }
+
+    public boolean isSolved() {
+        for (colors color : colors.values()) {
+            for (int row=0; row<3; row++) {
+                for (int col=0; col<3; col++) {
+                    if (cube[color.asInt()][row][col] != color) return false;
+                }
+            }
+        }
+        return true;
     }
 
     /**
