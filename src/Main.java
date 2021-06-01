@@ -8,7 +8,8 @@ public class Main extends Canvas {
         System.out.println("Launching");
 
         RubiksCube cube = new RubiksCube();
+        cube.traceScramble(20);
         GraphicsFrame rubiksVisualizer = new GraphicsFrame(cube);
-        cube.rotate(WHITE, RubiksCube.direction.CLOCKWISE);
+        cube.printSides();
     }
 }

@@ -58,7 +58,7 @@ public class RubiksCube {
                     awtColor = Color.GREEN;
                     break;
                 case 'O':
-                    awtColor = Color.ORANGE;
+                    awtColor = new Color(255, 150, 0);
                     break;
                 case 'Y':
                     awtColor = Color.YELLOW;
@@ -146,6 +146,24 @@ public class RubiksCube {
 
     public void scramble() {
         this.scramble(30);
+    }
+
+    public void traceScramble(int iterations) {
+        colors previousSide = null;
+        direction previousDir = null;
+        for (int i=0; i<iterations; i++) {
+            colors side = colors.values()[new Random().nextInt(6)];
+            direction dir = direction.values()[new Random().nextInt(2)];
+            //Make sure that new move doesn't just undo previous move
+            while (previousSide != null && side == previousSide && dir != previousDir) {
+                side = colors.values()[new Random().nextInt(6)];
+                dir = direction.values()[new Random().nextInt(2)];
+            }
+            this.rotate(side, dir);
+            System.out.printf("%d: %s %s\n", i, side, dir);
+            previousSide = side;
+            previousDir = dir;
+        }
     }
 
     /**
