@@ -1,10 +1,12 @@
 import rubIQs.*;
 import java.util.*;
-import static rubIQs.RubiksCube.colors.*;
-import static rubIQs.RubiksCube.direction.*;
+import static rubIQs.BetterCube.Color.*;
+import static rubIQs.BetterCube.Direction.*;
 
 public class Sandbox {
     static public void main(String[] args) {
-        System.out.println(4%4);
+        BetterCube r = new BetterCube();
+        r.traceScramble(10);
+        r.printSides();
     }
 }

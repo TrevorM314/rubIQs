@@ -1,5 +1,6 @@
 import javax.swing.*;
-import rubIQs.RubiksCube;
+
+import rubIQs.BetterCube;
 import java.awt.*;
 import java.awt.event.*;
 
@@ -7,7 +8,7 @@ public class GraphicsFrame extends JFrame implements ActionListener {
     CubeVisualizer rubiksVisualizer;
     Button topToFront, leftToFront, rightToFront, bottomToFront;
 
-    GraphicsFrame(RubiksCube r) {
+    GraphicsFrame(BetterCube r) {
         rubiksVisualizer = new CubeVisualizer(r);
         rubiksVisualizer.setLayout(null);
 
