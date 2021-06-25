@@ -8,7 +8,7 @@ public class Main extends Canvas {
         System.out.println("Launching");
 
         BetterCube cube = new BetterCube();
-        cube.traceScramble(20);
+        cube.traceScramble(5);
         GraphicsFrame rubiksVisualizer = new GraphicsFrame(cube);
         cube.printSides();
     }

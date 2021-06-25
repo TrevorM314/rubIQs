@@ -2,6 +2,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.lang.Math;
 import java.awt.Color;
+import java.lang.reflect.Array;
+import java.util.*;
 
 import rubIQs.ArrayHelper;
 import rubIQs.BetterCube;
@@ -39,6 +41,27 @@ public class CubeVisualizer extends JPanel{
         drawCube(frontSide, topSide, g);
     }
 
+    public BetterCube.Color getFrontSide() {
+        return this.frontSide;
+    }
+
+    /**
+     *
+     * @param side - The side whose edges are being calculated
+     * @return - an array of colors, starting with the sides top adjacent side, ending with left
+     */
+    private BetterCube.Color[] calculateAdjacentSides(BetterCube.Color side) {
+        BetterCube.Color[] adjacentSides = new BetterCube.Color[4];
+        BetterCube.Color[] colors = BetterCube.Color.values();
+        int sideNum = side.asInt();
+
+        adjacentSides[0] = colors[ (sideNum + 1 + (3 * (sideNum%2))) % 6 ]; //Top
+        adjacentSides[3] = colors[ (sideNum + 5) % 6 ]; //Left
+        adjacentSides[1] = colors[ (adjacentSides[3].asInt() + 3) % 6 ]; //Right
+        adjacentSides[2] = colors[ (adjacentSides[0].asInt() + 3) % 6 ]; //Bottom
+        return adjacentSides;
+    }
+
     public void topToFront() {
         BetterCube.Color leftSide = this.findLeftSide(frontSide, topSide);
         BetterCube.Color newTop = this.findLeftSide(leftSide, topSide);
@@ -62,15 +85,22 @@ public class CubeVisualizer extends JPanel{
 
     private void drawCube(BetterCube.Color frontColor, BetterCube.Color topColor, Graphics2D g) {
         drawFront(frontColor, topColor, g);
-        drawTop(topColor, g);
+        drawTop(frontColor, topColor, g);
         drawLeft(frontColor, topColor, g);
     }
 
     private void drawFront(BetterCube.Color frontColor, BetterCube.Color topColor, Graphics2D g) {
         BetterCube.Color[][] visualFront = ArrayHelper.deepCopy(cube.getCube()[frontColor.asInt()]);
-        BetterCube.Color[] adjacentSides = calculateAdjacentSides(frontColor); //Have to make function still
-        int numRotations = 0;
+        BetterCube.Color[] adjacentSides = calculateAdjacentSides(frontColor);
+        adjacentSides = ArrayHelper.reverseKeepFirst(adjacentSides);
+        int numRotations = 0; // Number of clockwise rotations to properly display the front side
+        while (adjacentSides[numRotations] != topColor) {
+            numRotations++;
+        }
 
+        for (int i=0; i<numRotations; i++) {
+            ArrayHelper.rotateArray(visualFront);
+        }
 
         g.setColor(Color.BLACK);
         g.fillRect(frontTopLeft-gapSpace, frontTopLeft-gapSpace, squareSize*3 + gapSpace*4, squareSize*3 + gapSpace*4);
@@ -82,7 +112,19 @@ public class CubeVisualizer extends JPanel{
         }
     }
 
-    private void drawTop(BetterCube.Color topColor, Graphics2D g) {
+    private void drawTop(BetterCube.Color frontColor, BetterCube.Color topColor, Graphics2D g) {
+        BetterCube.Color[][] visualFront = ArrayHelper.deepCopy(cube.getCube()[topColor.asInt()]);
+        BetterCube.Color[] adjacentSides = calculateAdjacentSides(topColor);
+        adjacentSides = ArrayHelper.reverseKeepFirst(adjacentSides); //Now iterating counter clockwise through adjacents
+        int numRotations = 0; // Number of clockwise rotations to properly display the front side
+        while (adjacentSides[(2+numRotations) % 4] != frontColor) {
+            numRotations++;
+        }
+
+        for (int i=0; i<numRotations; i++) {
+            ArrayHelper.rotateArray(visualFront);
+        }
+
         g.setColor(Color.BLACK);
         g.fillPolygon(
                 new int[] {topTopLeft-gapSpace, topTopLeft + cubeLength-gapSpace, frontTopLeft + cubeLength-gapSpace, frontTopLeft-gapSpace},
@@ -91,7 +133,7 @@ public class CubeVisualizer extends JPanel{
         );
         for (int row=0; row<3; row++) {
             for (int col=0; col<3; col++) {
-                g.setColor(toAwtColor(cube.getCube()[topColor.asInt()][row][col]));
+                g.setColor(toAwtColor(visualFront[row][col]));
                 int squareTopLeftX = topTopLeft + gapSpace+squareSize*col + gapSpace*col + zSquareOffset*row + zGapOffset*row;
                 int squareTopLeftY = topTopLeft + zSquareOffset*row + zGapOffset*row;
                 int[] xPoints = {squareTopLeftX, squareTopLeftX+squareSize, squareTopLeftX+zSquareOffset+squareSize, squareTopLeftX+zSquareOffset};
@@ -109,12 +151,25 @@ public class CubeVisualizer extends JPanel{
                 4
         );
         BetterCube.Color leftColor = findLeftSide(frontColor, topColor);
+
+        BetterCube.Color[][] visualLeft = ArrayHelper.deepCopy(cube.getCube()[leftColor.asInt()]);
+        BetterCube.Color[] adjacentSides = calculateAdjacentSides(leftColor);
+        adjacentSides = ArrayHelper.reverseKeepFirst(adjacentSides);
+        int numRotations = 0; // Number of clockwise rotations to properly display the front side
+        while (adjacentSides[numRotations] != topColor) {
+            numRotations++;
+        }
+
+        for (int i=0; i<numRotations; i++) {
+            ArrayHelper.rotateArray(visualLeft);
+        }
+
         for (int row=0; row<3; row++) {
             for (int col=0; col<3; col++) {
-                g.setColor(toAwtColor(cube.getCube()[leftColor.asInt()][row][col]));
-                int colMult = 2-col;
-                int squareTopLeftX = topTopLeft + zSquareOffset*row + zGapOffset*row;
-                int squareTopLeftY = topTopLeft+ zSquareOffset*row + zGapOffset*row + squareSize*colMult + gapSpace*colMult;
+                g.setColor(toAwtColor(visualLeft[row][col]));
+
+                int squareTopLeftX = topTopLeft + zSquareOffset*col + zGapOffset*col;
+                int squareTopLeftY = topTopLeft+ zSquareOffset*col + zGapOffset*col + squareSize*row + gapSpace*row;
                 int[] xPoints = {squareTopLeftX, squareTopLeftX+zSquareOffset, squareTopLeftX+zSquareOffset, squareTopLeftX};
                 int[] yPoints = {squareTopLeftY, squareTopLeftY+zSquareOffset, squareTopLeftY+zSquareOffset+squareSize, squareTopLeftY+squareSize};
                 g.fillPolygon(xPoints, yPoints, 4);
@@ -123,30 +178,11 @@ public class CubeVisualizer extends JPanel{
     }
 
     private BetterCube.Color findLeftSide(BetterCube.Color frontColor, BetterCube.Color topColor) {
-        BetterCube.Color[] counterClockwiseOrder;
-        switch (frontColor) {
-            default:
-            case WHITE:
-                counterClockwiseOrder = new BetterCube.Color[] {BetterCube.Color.BLUE, BetterCube.Color.ORANGE, BetterCube.Color.GREEN, BetterCube.Color.RED};
-                break;
-            case YELLOW:
-                counterClockwiseOrder = new BetterCube.Color[] {BetterCube.Color.BLUE, BetterCube.Color.RED, BetterCube.Color.GREEN, BetterCube.Color.ORANGE};
-                break;
-            case BLUE:
-                counterClockwiseOrder = new BetterCube.Color[] {BetterCube.Color.YELLOW, BetterCube.Color.ORANGE, BetterCube.Color.WHITE, BetterCube.Color.RED};
-                break;
-            case RED:
-                counterClockwiseOrder = new BetterCube.Color[] {BetterCube.Color.YELLOW, BetterCube.Color.BLUE, BetterCube.Color.WHITE, BetterCube.Color.GREEN};
-                break;
-            case GREEN:
-                counterClockwiseOrder = new BetterCube.Color[] {BetterCube.Color.YELLOW, BetterCube.Color.RED, BetterCube.Color.WHITE, BetterCube.Color.ORANGE};
-                break;
-            case ORANGE:
-                counterClockwiseOrder = new BetterCube.Color[] {BetterCube.Color.YELLOW, BetterCube.Color.GREEN, BetterCube.Color.WHITE, BetterCube.Color.BLUE};
-                break;
-        }
-
-        return counterClockwiseOrder[(indexOf(counterClockwiseOrder, topColor) + 1) % 4];
+        BetterCube.Color[] adjacentSides = calculateAdjacentSides(frontColor);
+        int topIdx = ArrayHelper.indexOf(topColor, adjacentSides);
+        int leftIdx = topIdx-1;
+        if (leftIdx < 0) leftIdx += 4;
+        return adjacentSides[leftIdx];
     }
 
     private BetterCube.Color findRightSide(BetterCube.Color frontColor, BetterCube.Color topColor) {
@@ -155,15 +191,6 @@ public class CubeVisualizer extends JPanel{
             rightSide = findLeftSide(rightSide, topColor);
         }
         return rightSide;
-    }
-
-    private int indexOf(BetterCube.Color[] array, BetterCube.Color query) {
-        for (int i=0; i<array.length; i++) {
-            if (array[i] == query) {
-                return i;
-            }
-        }
-        return -1;
     }
 
     private Color toAwtColor(BetterCube.Color c) {
