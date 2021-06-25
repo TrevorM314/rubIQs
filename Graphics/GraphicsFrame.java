@@ -14,25 +14,25 @@ public class GraphicsFrame extends JFrame implements ActionListener {
         rubiksVisualizer = new CubeVisualizer(r);
         rubiksVisualizer.setLayout(null);
 
-        topToFront = new Button("^");
-        topToFront.setBounds(220, 10, 20, 20);
-        topToFront.addActionListener(this);
-        rubiksVisualizer.add(topToFront);
-
-        leftToFront = new Button("<");
-        leftToFront.setBounds(0, 240, 20, 20);
-        leftToFront.addActionListener(this);
-        rubiksVisualizer.add(leftToFront);
-
-        bottomToFront = new Button("v");
-        bottomToFront.setBounds(240, 470, 20, 20);
+        bottomToFront = new Button("^");
+        bottomToFront.setBounds(220, 10, 20, 20);
         bottomToFront.addActionListener(this);
         rubiksVisualizer.add(bottomToFront);
 
-        rightToFront = new Button(">");
-        rightToFront.setBounds(470, 240, 20, 20);
+        rightToFront = new Button("<");
+        rightToFront.setBounds(0, 240, 20, 20);
         rightToFront.addActionListener(this);
         rubiksVisualizer.add(rightToFront);
+
+        topToFront = new Button("v");
+        topToFront.setBounds(240, 470, 20, 20);
+        topToFront.addActionListener(this);
+        rubiksVisualizer.add(topToFront);
+
+        leftToFront = new Button(">");
+        leftToFront.setBounds(470, 240, 20, 20);
+        leftToFront.addActionListener(this);
+        rubiksVisualizer.add(leftToFront);
 
         rotateFront = new Button("Rotate Front");
         rotateFront.setBounds(250, 350, 90, 20);
