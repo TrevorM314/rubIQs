@@ -1,6 +1,6 @@
 package rubIQs;
 
-import rubIQs.BetterCube.Color;
+import rubIQs.RubiksCube.Color;
 
 public class ArrayHelper {
 
@@ -46,20 +46,20 @@ public class ArrayHelper {
      * NOTE: This does not rotate the cube, but only how it is displayed
      * @param side - The 3x3 representation of the side to be rotated
      */
-    public static BetterCube.Color[][] rotateArray(BetterCube.Color[][] side) {
-        BetterCube.Color[][] thisSide = side.clone();
+    public static RubiksCube.Color[][] rotateArray(RubiksCube.Color[][] side) {
+        RubiksCube.Color[][] thisSide = side.clone();
         int n = thisSide.length;
 
         for (int i = 0; i < n; ++i) {
             for (int j = 0; j < i; ++j) {
-                BetterCube.Color temp = thisSide[i][j];
+                RubiksCube.Color temp = thisSide[i][j];
                 thisSide[i][j] = thisSide[j][i];
                 thisSide[j][i] = temp;
             }
         }
         for (int i = 0; i < n; ++i) {
             for (int j = 0; j < n / 2; ++j) {
-                BetterCube.Color temp = thisSide[i][j];
+                RubiksCube.Color temp = thisSide[i][j];
                 thisSide[i][j] = thisSide[i][n - j - 1];
                 thisSide[i][n - j - 1] = temp;
             }

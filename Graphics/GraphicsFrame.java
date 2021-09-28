@@ -1,15 +1,15 @@
 import javax.swing.*;
 
-import rubIQs.BetterCube;
+import rubIQs.RubiksCube;
 import java.awt.*;
 import java.awt.event.*;
 
 public class GraphicsFrame extends JFrame implements ActionListener {
     CubeVisualizer rubiksVisualizer;
     Button topToFront, leftToFront, rightToFront, bottomToFront, rotateFront;
-    BetterCube cube;
+    RubiksCube cube;
 
-    GraphicsFrame(BetterCube r) {
+    GraphicsFrame(RubiksCube r) {
         this.cube = r;
         rubiksVisualizer = new CubeVisualizer(r);
         rubiksVisualizer.setLayout(null);
@@ -61,7 +61,7 @@ public class GraphicsFrame extends JFrame implements ActionListener {
             rubiksVisualizer.rightToFront();
         }
         else if (source == rotateFront) {
-            cube.rotate(rubiksVisualizer.getFrontSide(), BetterCube.Direction.CLOCKWISE);
+            cube.rotate(rubiksVisualizer.getFrontSide(), RubiksCube.Direction.CLOCKWISE);
         }
         this.paint(getGraphics());
     }
